@@ -1,17 +1,28 @@
 
-// import { useEffect, useState } from 'react';
-// import data from '../components/storage/dataBase'
+import { useEffect, useState } from 'react';
+import getStore from '../components/storage/dataBase'
 
 function PreviewPage() {
-    // const [item, setItem] = useState(data)
+    const [item, setItem] = useState([])
 
-    // useEffect(() => {
-    //     console.log(item.result[0]);
-    // }, [])
+    useEffect(() => {
+        async function getRes() {
+            const { result } = await getStore();
+            setItem(result);
+        }
+        getRes();
+    }, [])
+
 
     return (
         <div>
-            <h1>HI</h1>
+
+            <button onClick={() => console.log(item)}>+++</button>
+
+            <ol>
+                {item.map((el, i) => <li key={i}>{el.product}</li>)}
+            </ol>
+
         </div >
     );
 }
