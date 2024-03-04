@@ -10,11 +10,11 @@ const auth = () => {
 
 const authorizationString = auth(password)
 
-const getIDs = async () => {
+const getAllIDs = async () => {
     try {
         const response = await axios.post("http://api.valantis.store:40000/", {
             action: "get_ids",
-            params: { "offset": 0, "limit": 47 }
+            params: { "offset": 0, "limit": null }
         }, {
             headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
         });
@@ -28,7 +28,7 @@ const getIDs = async () => {
 
 const getStore = async () => {
     try {
-        const arrayIDs = await getIDs();
+        const arrayIDs = await getAllIDs();
 
         const response = await axios.post("http://api.valantis.store:40000/", {
             action: "get_items",
@@ -37,7 +37,6 @@ const getStore = async () => {
             headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
         });
 
-        // console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Error:', error);
@@ -45,4 +44,21 @@ const getStore = async () => {
     }
 };
 
-export default getStore;
+const filteredStore = async () => {
+    try {
+
+        const response = await axios.post("http://api.valantis.store:40000/", {
+            "action": "filter",
+            "params": { "price": 17500.0 }
+        }, {
+            headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+};
+
+export { filteredStore, getStore };
