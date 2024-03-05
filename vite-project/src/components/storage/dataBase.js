@@ -10,7 +10,7 @@ const auth = () => {
 
 const authorizationString = auth(password)
 
-const getAllIDs = async () => {
+const getAllID = async () => {
     try {
         const response = await axios.post("http://api.valantis.store:40000/", {
             action: "get_ids",
@@ -26,13 +26,35 @@ const getAllIDs = async () => {
     }
 };
 
-const getStore = async () => {
+const filteredStore = async () => {
     try {
-        const arrayIDs = await getAllIDs();
+        // price 20000
+        // brand "Chopard"
+        // product "Серебряный кулон с цирконием"
+        const response = await axios.post("http://api.valantis.store:40000/", {
+            "action": "filter",
+            "params": { "brand": "Chopard" }
+        }, {
+            headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
+        });
+
+        console.log('filtered +++');
+        return response.data.result;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+};
+
+
+const getStore = async (req) => {
+    try {
+        const arrayID = await getAllID();
+        const filteredID = await filteredStore();
 
         const response = await axios.post("http://api.valantis.store:40000/", {
             action: "get_items",
-            params: { "ids": arrayIDs }
+            params: { "ids": req === undefined ? arrayID : filteredID }
         }, {
             headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
         });
@@ -44,21 +66,6 @@ const getStore = async () => {
     }
 };
 
-const filteredStore = async () => {
-    try {
 
-        const response = await axios.post("http://api.valantis.store:40000/", {
-            "action": "filter",
-            "params": { "price": 17500.0 }
-        }, {
-            headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
-        });
 
-        return response.data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-};
-
-export { filteredStore, getStore };
+export default getStore;

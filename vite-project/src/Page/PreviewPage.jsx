@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import getStore from '../components/storage/dataBase'
 import { Pagination } from '@mantine/core';
@@ -6,7 +5,6 @@ import { Pagination } from '@mantine/core';
 
 function PreviewPage() {
     const [item, setItem] = useState([])
-
 
     const [currentPage, setCurrentPage] = useState(1);
     const [size] = useState(50);
@@ -22,11 +20,21 @@ function PreviewPage() {
         getRes();
     }, [])
 
+    const newStore = async () => {
+        await getStore()
+    }
 
     return (
         <div>
 
             <button onClick={() => console.log(item)}>+++</button>
+            <button onClick={() => console.log(item)}>Request</button>
+
+            <div className='inputForm'>
+                <input placeholder='price' />
+                <input placeholder='brand' />
+                <input placeholder='product' />
+            </div>
 
             <Pagination
                 total={Math.ceil(item.length / size)}
@@ -35,7 +43,7 @@ function PreviewPage() {
                 onChange={setCurrentPage}
                 value={currentPage}
             />
-            
+
             <ol>
                 {curCart.map((el, i) => <li key={i}>{el.product}</li>)}
             </ol>
