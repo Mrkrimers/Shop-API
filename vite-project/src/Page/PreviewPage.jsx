@@ -4,51 +4,86 @@ import { Pagination } from '@mantine/core';
 
 
 function PreviewPage() {
-    const [item, setItem] = useState([])
+    const [store, setStore] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [size] = useState(50);
     const LInd = currentPage * size;
     const FInd = LInd - size;
-    const curCart = item.slice(FInd, LInd)
+    const curCart = store.slice(FInd, LInd)
 
     useEffect(() => {
         async function getRes() {
             const { result } = await getStore();
-            setItem(result);
+            setStore(result);
         }
         getRes();
     }, [])
 
-    const newStore = async () => {
-        await getStore()
-    }
+
+    const [formData, setFormData] = useState({
+        selectedOption: '',
+        price: ''
+    });
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const { selectedOption, price } = formData;
+        const request = { [selectedOption]: price };
+
+        const { result } = await getStore(request);
+        setStore(result);
+    };
+
 
     return (
         <div>
 
-            <button onClick={() => console.log(item)}>+++</button>
-            <button onClick={() => console.log(item)}>Request</button>
+            <button onClick={() => console.log(store)}>+++</button>
 
-            <div className='inputForm'>
-                <input placeholder='price' />
-                <input placeholder='brand' />
-                <input placeholder='product' />
-            </div>
+            <aside className='filterForm'>
 
-            <Pagination
-                total={Math.ceil(item.length / size)}
-                position="center"
-                style={{ marginTop: "40px" }}
-                onChange={setCurrentPage}
-                value={currentPage}
-            />
+                <form onSubmit={handleSubmit}>
+                    <select
+                        name="selectedOption"
+                        value={formData.selectedOption}
+                        onChange={handleChange}
+                    >
+
+                        <option value="" onClick={() => console.log("HI")} >Select filter</option>
+                        <option value="price">Price</option>
+                        <option value="product">Product</option>
+                        <option value="brand">Brand</option>
+
+                    </select>
+                    <input
+                        type="text"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleChange}
+                        placeholder="Enter price"
+                    />
+                    <button type="submit">Submit</button>
+                </form>
+
+            </aside>
 
             <ol>
                 {curCart.map((el, i) => <li key={i}>{el.product}</li>)}
             </ol>
 
-
+            <Pagination
+                total={Math.ceil(store.length / size)}
+                position="center"
+                style={{ marginTop: "40px" }}
+                onChange={setCurrentPage}
+                value={currentPage}
+            />
         </div >
     );
 }

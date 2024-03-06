@@ -26,14 +26,19 @@ const getAllID = async () => {
     }
 };
 
-const filteredStore = async () => {
+const filteredStore = async (req) => {
     try {
-        // price 20000
-        // brand "Chopard"
-        // product "Серебряный кулон с цирконием"
+
+        console.log(req);
+
+        const { price } = req;
+        if (price !== undefined) {
+            (!isNaN(price) && price !== "") ? req.price = parseInt(req.price) : alert('НЕКОРЕКТНЫЙ ВВОД ДАННЫХ')
+        }
+
         const response = await axios.post("http://api.valantis.store:40000/", {
             "action": "filter",
-            "params": { "brand": "Chopard" }
+            "params": req
         }, {
             headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
         });
@@ -49,12 +54,9 @@ const filteredStore = async () => {
 
 const getStore = async (req) => {
     try {
-        const arrayID = await getAllID();
-        const filteredID = await filteredStore();
-
         const response = await axios.post("http://api.valantis.store:40000/", {
             action: "get_items",
-            params: { "ids": req === undefined ? arrayID : filteredID }
+            params: { "ids": req === undefined ? await getAllID() : await filteredStore(req) }
         }, {
             headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
         });
