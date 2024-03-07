@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import getStore from '../components/storage/dataBase'
 import { Pagination } from '@mantine/core';
-
+import AsideForm from '../components/Aside/Aside';
 
 function PreviewPage() {
     const [store, setStore] = useState([]);
@@ -12,33 +12,31 @@ function PreviewPage() {
     const FInd = LInd - size;
     const curCart = store.slice(FInd, LInd)
 
+
+    const [retryCount, setRetryCount] = useState(0);
+    const maxRetries = 5;
+
     useEffect(() => {
-        async function getRes() {
-            const { result } = await getStore();
-            setStore(result);
+        async function getResponseFromAPI() {
+            try {
+                const { result } = await getStore();
+
+                setStore(result);
+            } catch (error) {
+                console.error('Произошла ошибка при получении данных:', error);
+                
+                if (retryCount < maxRetries) {
+                    console.log(`Повторяем запрос... Колличество попыток${retryCount}`);
+                    setRetryCount(retryCount + 1);
+                    getResponseFromAPI(); // Повторяем запрос
+                } else {
+                    console.error('Достигнуто максимальное количество попыток повтора.');
+                }
+                
+            }
         }
-        getRes();
-    }, [])
-
-
-    const [formData, setFormData] = useState({
-        selectedOption: '',
-        price: ''
-    });
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const { selectedOption, price } = formData;
-        const request = { [selectedOption]: price };
-
-        const { result } = await getStore(request);
-        setStore(result);
-    };
+        getResponseFromAPI();
+    }, [retryCount])
 
 
     return (
@@ -46,32 +44,7 @@ function PreviewPage() {
 
             <button onClick={() => console.log(store)}>+++</button>
 
-            <aside className='filterForm'>
-
-                <form onSubmit={handleSubmit}>
-                    <select
-                        name="selectedOption"
-                        value={formData.selectedOption}
-                        onChange={handleChange}
-                    >
-
-                        <option value="" onClick={() => console.log("HI")} >Select filter</option>
-                        <option value="price">Price</option>
-                        <option value="product">Product</option>
-                        <option value="brand">Brand</option>
-
-                    </select>
-                    <input
-                        type="text"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleChange}
-                        placeholder="Enter price"
-                    />
-                    <button type="submit">Submit</button>
-                </form>
-
-            </aside>
+            <AsideForm setStore={setStore} />
 
             <ol>
                 {curCart.map((el, i) => <li key={i}>{el.product}</li>)}

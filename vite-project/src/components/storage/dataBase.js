@@ -29,16 +29,12 @@ const getAllID = async () => {
 const filteredStore = async (req) => {
     try {
 
-        console.log(req);
-
-        const { price } = req;
-        if (price !== undefined) {
-            (!isNaN(price) && price !== "") ? req.price = parseInt(req.price) : alert('НЕКОРЕКТНЫЙ ВВОД ДАННЫХ')
-        }
+        if (req.price === '') return alert('НЕКОРЕКТНЫЙ ВВОД ДАННЫХ')
+        if (req.selectedOption === 'price') req.price = parseInt(req.price)
 
         const response = await axios.post("http://api.valantis.store:40000/", {
             "action": "filter",
-            "params": req
+            "params": { [req.selectedOption]: req.price }
         }, {
             headers: { 'Content-Type': 'application/json', 'X-Auth': authorizationString }
         });
@@ -47,7 +43,7 @@ const filteredStore = async (req) => {
         return response.data.result;
     } catch (error) {
         console.error('Error:', error);
-        throw error;
+        return await getStore();
     }
 };
 
