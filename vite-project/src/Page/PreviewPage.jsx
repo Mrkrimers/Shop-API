@@ -12,7 +12,6 @@ function PreviewPage() {
     const FInd = LInd - size;
     const curCart = store.slice(FInd, LInd)
 
-
     const [retryCount, setRetryCount] = useState(0);
     const maxRetries = 5;
 

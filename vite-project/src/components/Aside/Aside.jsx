@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import getStore from '../storage/dataBase'
-
+import { Select, Input, Button } from '@mantine/core';
 
 function AsideForm({ setStore }) {
 
@@ -12,7 +12,7 @@ function AsideForm({ setStore }) {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        if (value === 'select') window.location.reload();
+        if (value === null) window.location.reload();
         setFormData({ ...formData, [name]: value });
     };
 
@@ -25,28 +25,22 @@ function AsideForm({ setStore }) {
     return (
         <aside className='filterForm'>
             <button onClick={() => console.log(formData)}>Check</button>
-            <form onSubmit={handleSubmit}>
-                <select
-                    name="selectedOption"
-                    value={formData.selectedOption}
-                    onChange={handleChange}
-                >
 
-                    <option value="select">Select filter</option>
-                    <option value="price">Price</option>
-                    <option value="product">Product</option>
-                    <option value="brand">Brand</option>
+            <Select
+                placeholder="Select filter"
+                data={[{ value: 'price', label: 'Price' }, { value: 'product', label: 'Product' }, { value: 'brand', label: 'Brand' }]}
+                value={formData ? formData.selectedOption : null}
+                onChange={(value) => setFormData({ ...formData, selectedOption: value })}
+                clearable
+            />
 
-                </select>
+            <Input
+                name="price"
+                onChange={handleChange}
+                placeholder="Enter data for filtering"
+            />
 
-                <input
-                    type="text"
-                    name="price"
-                    onChange={handleChange}
-                    placeholder="Enter data for filtering"
-                />
-                <button type="submit">Request</button>
-            </form>
+            <Button onClick={handleSubmit} variant="filled">Request</Button>
 
         </aside>
 
