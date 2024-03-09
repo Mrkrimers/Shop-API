@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import getStore from '../storage/dataBase'
 import { Select, Input, Button } from '@mantine/core';
+import style from '../Header/style.module.scss'
 
-function AsideForm({ setStore }) {
+function Header({ setStore }) {
 
     const [formData, setFormData] = useState({
         selectedOption: '',
@@ -12,25 +13,24 @@ function AsideForm({ setStore }) {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        if (value === null) window.location.reload();
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (event) => {
+    const handleClick = async (event) => {
         event.preventDefault();
         const { result } = await getStore(formData);
         setStore(result);
     };
 
     return (
-        <aside className='filterForm'>
-            <button onClick={() => console.log(formData)}>Check</button>
+        <header className={style.header}>
+            {/* <button onClick={() => console.log(formData)}>Check</button> */}
 
             <Select
                 placeholder="Select filter"
                 data={[{ value: 'price', label: 'Price' }, { value: 'product', label: 'Product' }, { value: 'brand', label: 'Brand' }]}
                 value={formData ? formData.selectedOption : null}
-                onChange={(value) => setFormData({ ...formData, selectedOption: value })}
+                onChange={(value) => value !== null ? setFormData({ ...formData, selectedOption: value }) : window.location.reload()}
                 clearable
             />
 
@@ -40,11 +40,11 @@ function AsideForm({ setStore }) {
                 placeholder="Enter data for filtering"
             />
 
-            <Button onClick={handleSubmit} variant="filled">Request</Button>
+            <Button onClick={handleClick} variant="filled">Request</Button>
 
-        </aside>
+        </header>
 
     )
 }
 
-export default AsideForm;
+export default Header;

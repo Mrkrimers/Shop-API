@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import getStore from '../components/storage/dataBase'
 import { Pagination } from '@mantine/core';
-import AsideForm from '../components/Aside/Aside';
+import Header from '../components/Header/Header';
+import style from '../Page/style.module.scss'
 
 function PreviewPage() {
     const [store, setStore] = useState([]);
@@ -23,7 +24,7 @@ function PreviewPage() {
                 setStore(result);
             } catch (error) {
                 console.error('Произошла ошибка при получении данных:', error);
-                
+
                 if (retryCount < maxRetries) {
                     console.log(`Повторяем запрос... Колличество попыток${retryCount}`);
                     setRetryCount(retryCount + 1);
@@ -31,7 +32,7 @@ function PreviewPage() {
                 } else {
                     console.error('Достигнуто максимальное количество попыток повтора.');
                 }
-                
+
             }
         }
         getResponseFromAPI();
@@ -39,24 +40,35 @@ function PreviewPage() {
 
 
     return (
-        <div>
-
+        <main>
             <button onClick={() => console.log(store)}>+++</button>
 
-            <AsideForm setStore={setStore} />
+            <div className={style.title}>
+                <h1>SHOP FROM API</h1>
+            </div>
 
-            <ol>
-                {curCart.map((el, i) => <li key={i}>{el.product}</li>)}
-            </ol>
+            <Header setStore={setStore} />
+
+            <div className={style.productWrapper}>
+
+                {curCart.map((el, i) =>
+                    <div key={i} className={style.item}>
+                        <h1>Price: {el.price}</h1>
+                        <h3>{el.product}</h3>
+                        {el.brand !== null ? <p>Brand: {el.brand}</p> : null}
+                        <p>Id: {el.id}</p>
+                    </div>)}
+
+            </div>
 
             <Pagination
                 total={Math.ceil(store.length / size)}
                 position="center"
-                style={{ marginTop: "40px" }}
+                style={{ margin: "30px 0" }}
                 onChange={setCurrentPage}
                 value={currentPage}
             />
-        </div >
+        </main >
     );
 }
 
