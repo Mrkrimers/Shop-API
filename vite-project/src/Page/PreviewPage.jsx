@@ -40,8 +40,6 @@ function PreviewPage() {
 
     return (
         <main>
-            <button onClick={() => console.log(store)}>+++</button>
-
             <div className={style.title}>
                 <h1>SHOP FROM API</h1>
             </div>
