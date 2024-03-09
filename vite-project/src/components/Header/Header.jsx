@@ -5,6 +5,8 @@ import { Select, Input, Button } from '@mantine/core';
 import style from '../Header/style.module.scss'
 
 function Header({ setStore }) {
+    const [retryCount, setRetryCount] = useState(0);
+    const maxRetries = 5;
 
     const [formData, setFormData] = useState({
         selectedOption: '',
@@ -18,13 +20,24 @@ function Header({ setStore }) {
 
     const handleClick = async (event) => {
         event.preventDefault();
-        const { result } = await getStore(formData);
-        setStore(result);
+        try {
+            setStore([])
+            const { result } = await getStore(formData);
+            setStore(result);
+        } catch (error) {
+            console.error('Произошла ошибка при получении данных:', error);
+            if (retryCount < maxRetries) {
+                console.log(`Повторяем запрос... Колличество попыток${retryCount}`);
+                setRetryCount(retryCount + 1);
+                handleClick(event); // Повторяем запрос
+            } else {
+                console.error('Достигнуто максимальное количество попыток повтора.');
+            }
+        }
     };
 
     return (
         <header className={style.header}>
-            {/* <button onClick={() => console.log(formData)}>Check</button> */}
 
             <Select
                 placeholder="Select filter"

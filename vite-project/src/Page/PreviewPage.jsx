@@ -32,7 +32,6 @@ function PreviewPage() {
                 } else {
                     console.error('Достигнуто максимальное количество попыток повтора.');
                 }
-
             }
         }
         getResponseFromAPI();
@@ -49,17 +48,21 @@ function PreviewPage() {
 
             <Header setStore={setStore} />
 
-            <div className={style.productWrapper}>
+            {curCart.length ?
+                <div className={style.productWrapper}>
 
-                {curCart.map((el, i) =>
-                    <div key={i} className={style.item}>
-                        <h1>Price: {el.price}</h1>
-                        <h3>{el.product}</h3>
-                        {el.brand !== null ? <p>Brand: {el.brand}</p> : null}
-                        <p>Id: {el.id}</p>
-                    </div>)}
+                    {curCart.map((el, i) =>
+                        <div key={i} className={style.item}>
+                            <h1>Price: {el.price}</h1>
+                            <h3>{el.product}</h3>
+                            {el.brand !== null ? <p>Brand: {el.brand}</p> : null}
+                            <p>Id: {el.id}</p>
+                        </div>)}
 
-            </div>
+                </div> :
+                <div className={style.loading}><h1>LOADING...</h1></div>}
+
+
 
             <Pagination
                 total={Math.ceil(store.length / size)}
