@@ -12,7 +12,7 @@ const authorizationString = auth(password)
 
 const getAllID = async () => {
     try {
-        const response = await axios.post("http://api.valantis.store:40000/", {
+        const response = await axios.post("https://api.valantis.store:41000/", {
             action: "get_ids",
             params: { "offset": 0, "limit": null }
         }, {
@@ -32,7 +32,7 @@ const filteredStore = async (req) => {
         if (req.price === '') return alert('НЕКОРЕКТНЫЙ ВВОД ДАННЫХ')
         if (req.selectedOption === 'price') req.price = parseInt(req.price)
 
-        const response = await axios.post("http://api.valantis.store:40000/", {
+        const response = await axios.post("https://api.valantis.store:41000/", {
             "action": "filter",
             "params": { [req.selectedOption]: req.price }
         }, {
@@ -49,7 +49,7 @@ const filteredStore = async (req) => {
 
 const getStore = async (req) => {
     try {
-        const response = await axios.post("http://api.valantis.store:40000/", {
+        const response = await axios.post("https://api.valantis.store:41000/", {
             action: "get_items",
             params: { "ids": req === undefined ? await getAllID() : await filteredStore(req) }
         }, {
